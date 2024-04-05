@@ -1,0 +1,62 @@
+'''
+Вариант 13.
+Натуральные числа.
+Выводит на экран нечетные числа, использующие не более К разных цифр.
+Список используемых цифр выводится отдельно прописью.
+'''
+
+number_dict = {0: 'ноль',
+               1: 'один',
+               2: 'два',
+               3: 'три',
+               4: 'четыре',
+               5: 'пять',
+               6: 'шесть',
+               7: 'семь',
+               8: 'восемь',
+               9: 'девять'}
+
+import re
+
+x = ''
+k = 5
+q = ''
+a = []
+f1 = False
+
+try:
+    open('text.txt', 'r')
+except:
+    print('Файл отсутствует в директории проекта')
+    exit()
+
+f = open("text2.txt")
+s = f.read()
+
+for i in re.findall(r"\b[0-9][^ ,\n]+\b", s):
+    print(re.findall(r"\b[0-9][^ ,\n]+\b", s))
+    for j in i:
+        if j not in x:
+            x += j
+        else:
+            continue
+    try:
+        if int(i[-1]) % 2 != 0 and len(x) <= k:
+            q += x
+            a.append(i)
+            if i.isdigit():
+                f1 = True
+            else:
+                f1 = False
+        x = ""
+    except ValueError:
+        pass
+if f1:
+    print("Нечётные числа, использующие не более К разных цифр:")
+    print(*a, "\n")
+    print("Список используемых цифр: ")
+    q = sorted(list(set(q)))
+    for i in q:
+        print(number_dict[int(i)], end=" ")
+else:
+    print("\nФайл пустой или в нём нет чисел, удовлетворяющих условию. Попробуйте ещё раз\n")
