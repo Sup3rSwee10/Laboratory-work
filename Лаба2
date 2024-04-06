@@ -31,7 +31,7 @@ except:
 
 f = open("text2.txt")
 s = f.read()
-b = re.findall(r"\b[0-9][^ ,\n]+[1,3,5,7,9]\b", s)
+b = re.findall(r"\b[0-9]+[13579]\b", s)
 
 for i in b:
     for j in i:
