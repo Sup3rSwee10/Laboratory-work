@@ -1,0 +1,172 @@
+"""
+Лабораторная работа № 3 - АиСД
+С клавиатуры вводятся два числа K и N. Квадратная матрица А(N,N), состоящая из 4-х равных по размерам подматриц,
+B, C, D, E заполняется случайным образом целыми числами в интервале [-10,10]. Для тестирования использовать не случайное
+заполнение, а целенаправленное.
+Вид матрицы А:
+D  Е
+С  В
+Каждая из матриц B, C, D, E имеет вид:
+	4
+  3 	1
+	2
+
+Вариант 13:
+Формируется матрица F следующим образом:
+если в С  количество четных чисел в нечетных столбцах в области 1 больше,чем сумма чисел в нечетных строках в области 4,
+то поменять в Е симметрично области 1 и 4 местами, иначе В и Е поменять местами несимметрично.
+При этом матрица А не меняется.
+После чего вычисляется выражение: A*А– K*AT.
+Выводятся по мере формирования А, F и все матричные операции последовательно.
+"""
+
+import random
+import math
+
+count_sum_elements = 0
+count_chet_elements = 0
+
+
+K = int(input("Введите число K: "))
+N = int(input("Введите число N: "))
+
+
+M = middle_line = N // 2
+
+def print_matrix(arr):
+	for i in range(len(arr)):
+		for j in range(len(arr)):
+			print("{:4d}".format(arr[i][j]), end="")
+		print()
+
+
+
+print("Матрица A:")
+A = [[random.randint(-3, 3) for i in range(N)] for j in range(N)]
+for i in range(N):
+	for j in range(N):
+		A[i][j] = random.randint(-3, 3)
+		print("{:4d}".format(A[i][j]), end="")
+	print()
+
+
+
+
+print("Матрица D:")
+D = [[A[i][j] for j in range(N // 2)] for i in range(N//2)]
+
+print_matrix(D)
+print("Матрица E:")
+E = [[A[i][j] for j in range(N // 2, N)] for i in range(0, N//2)]
+print_matrix(E)
+print("Матрица C:")
+C = [[A[i][j] for j in range(N // 2)] for i in range(N//2, N)]
+
+print_matrix(C)
+print("Матрица B:")
+B = [[A[i][j] for j in range(N // 2, N)] for i in range(N//2, N)]
+
+print_matrix(B)
+
+F = [[A[i][j] for j in range(N)] for i in range(N)]
+
+# Работаем с С - область 1
+for j in range(middle_line - 1, (middle_line // 2), -1):
+	for i in range(middle_line - j, middle_line - (middle_line - j)):
+		if j % 2 == 0 and C[i][j] % 2 == 0:
+			count_chet_elements += 1
+
+
+for i in range(0, middle_line // 2):
+	for j in range(i+1, (middle_line - i)-1):
+		if i % 2 == 0:
+			count_sum_elements += C[i][j]
+print("Сумма чисел в нечётных строках: ", count_sum_elements)
+
+
+
+print("количество четных чисел в нечетных столбцах: ", count_chet_elements)
+
+
+
+if count_sum_elements < count_chet_elements:
+	print("Кол-во нулевых элементов в нечётных столбцах БОЛЬШЕ, чем Кол-во отрицательных элементов в чётных строках ")
+	# Работаем с матрицей E
+	for i in range(0, middle_line // 2):
+		for j in range(i + 1, (middle_line - i) - 1):
+			E[i][j], E[j][i] = E[j][i], E[i][j]
+	"""
+	print("Матрица E:")
+	# print(E)
+	print_matrix(B)
+	"""
+
+else: # меняем B и E местами несимметрично
+	print("Кол-во нулевых элементов в нечётных столбцах МЕНЬШЕ, чем Кол-во отрицательных элементов в чётных строках ")
+	B, E = E, B
+
+
+# Собираем матрицу F
+
+for i in range(N // 2):
+	for j in range(N // 2):
+		F[i][j] = D[i][j]
+
+for i in range(N // 2):
+	for j in range(N // 2, N):
+		F[i][j] = E[i][j - (N // 2)]
+
+for i in range(N // 2, N):
+	for j in range(N // 2):
+		F[i][j] = C[i - N // 2][j]
+
+for i in range(N // 2, N):
+	for j in range(N // 2, N):
+		F[i][j] = B[i - N // 2][j - N // 2]
+
+
+
+print("Матрица F: ")
+print_matrix(F)
+
+print("Матрица A: ")
+print_matrix(A)
+
+
+
+AT = [[random.randint(0, 0) for i in range(N)] for j in range(N)]
+KA = [[random.randint(0, 0) for i in range(N)] for j in range(N)]
+KA_A = [[random.randint(0, 0) for i in range(N)] for j in range(N)]
+K_AT = [[random.randint(0, 0) for i in range(N)] for j in range(N)]
+KA_A_K_AT = [[random.randint(0, 0) for i in range(N)] for j in range(N)]
+
+
+print("Матрица AT: ")
+for i in range(N):
+	for j in range(N):
+		AT[i][j] = A[j][i]
+print_matrix(AT)
+
+print("Матрица K*A: ")
+for i in range(N):
+	for j in range(N):
+		KA[i][j] = K * A[i][j]
+print_matrix(KA)
+
+print("Матрица (K*A)*A: ")
+for i in range(N):
+	for j in range(N):
+		KA_A[i][j] = KA[i][j] * A[i][j]
+print_matrix(KA_A)
+
+print("Матрица K*AT: ")
+for i in range(N):
+	for j in range(N):
+		K_AT[i][j] = K * AT[i][j]
+print_matrix(K_AT)
+
+print("Матрица ((K*A)*A)-(K*AT): ")
+for i in range(N):
+	for j in range(N):
+		KA_A_K_AT[i][j] = KA_A[i][j] - K_AT[i][j]
+print_matrix(KA_A_K_AT)
