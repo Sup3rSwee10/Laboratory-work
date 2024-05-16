@@ -1,0 +1,108 @@
+"""
+Задание на л.р. №6
+Задание состоит из двух частей.
+1 часть – написать программу в соответствии со своим вариантом задания. Написать 2 варианта формирования
+(алгоритмический и с помощью функций Питона), сравнив по времени их выполнение.
+2 часть – усложнить написанную программу, введя по своему усмотрению в условие минимум
+одно ограничение на характеристики объектов (которое будет сокращать количество переборов) и целевую функцию
+для нахождения оптимального решения.
+
+Вариант 13. Фирма закупает К компьютеров. В магазине компьютеры N типов. Сформировать все возможные варианты покупки.
+"""
+import itertools
+import time
+from random import randint
+
+
+# 1 часть
+n = int(input("Введите число типов N: "))
+k = int(input("Введите число компьютеров K: "))
+
+#С помощью функций Питона
+print('\nС помощью функций Питона -- начало\n')
+start_func = time.time()
+
+type=[]
+
+for i in range(1,n+1):
+    type.append(i)
+
+res = list((itertools.combinations_with_replacement(type, k)))
+
+for i in range(len(res)):
+    print('Вариант',i+1 ,':', k,'компьютеров типов', res[i], '\n')
+
+end_func = time.time()
+print("С помощью функций питона: {:>.5f}".format(end_func-start_func) + " секунд.")
+
+#С помощью функций Питона -- конец
+print('\nС помощью функций Питона -- конец\n')
+
+
+#Алгоритмический -- начало
+print('\nАлгоритмический -- начало\n')
+start_alg = time.time()
+
+# Функция для нахождения комбинаций
+def combinations_with_replacement(iterable, r):
+    pool = tuple(iterable)
+    n = len(pool)
+    if not n and r:
+        return
+    indices = [0] * r
+    yield tuple(pool[i] for i in indices)
+    while True:
+        for i in reversed(range(r)):
+            if indices[i] != n - 1:
+                break
+        else:
+            return
+        indices[i:] = [indices[i] + 1] * (r - i)
+        yield tuple(pool[i] for i in indices)
+
+type=[]
+for i in range(1,n+1):
+    type.append(i)
+
+res = list((itertools.combinations_with_replacement(type, k)))
+
+for i in range(len(res)):
+    print('Вариант',i+1 ,':', k,'компьютеров типов', res[i], '\n')
+
+end_alg = time.time()
+print("Алгоритмический метод: {:>.5f}".format(end_alg-start_alg) + " секунд.")
+
+#Алгоритмический -- конец
+print('\nАлгоритмический -- конец\n')
+
+print("Разница по времени {:>.5f}".format(abs((end_alg-start_alg) - (end_func-start_func))) + " секунд.\n")
+
+
+# 2 часть
+print('\n 2 часть -- начало\n')
+"""
+Ограничение:
+Фирма закупает К компьютеров любых T различных типов. В магазине компьютеры N типов. Сформировать все возможные варианты покупки.
+"""
+
+t = int(input("Введите число типов T: "))
+if t>n:
+    print('\nВ магазине нет такого количества типов компьютеров')
+    exit()
+
+
+type=[]
+for i in range(1,n+1):
+    type.append(i)
+
+ttype=list((itertools.combinations(type, t)))
+
+x=randint(0, len(ttype)-1)
+
+print(t, 'различных типа/типов из', n,':',ttype[x], '\n')
+res = list((itertools.combinations_with_replacement(ttype[x], k)))
+
+for i in range(len(res)):
+    print('Вариант',i+1 ,':', k,'компьютеров типов', res[i], '\n')
+
+print('2 часть -- конец\n')
