@@ -1,0 +1,67 @@
+"""
+Лабораторная работа №5
+Задана рекуррентная функция. Область определения функции – натуральные числа.
+Написать программу сравнительного вычисления данной функции рекурсивно и итерационно.
+Определить границы применимости рекурсивного и итерационного подхода.
+Результаты сравнительного исследования времени вычисления представить в табличной и графической форме в виде отчета по лабораторной работе.
+Вариант 13:	F(1) = 1; G(1) = 1; F(n) = ((-1)**n)*( (n–1)! – G(n–1)), G(n) = F(n–1), при n >=2
+"""
+
+import math
+import time
+import matplotlib.pyplot as plt
+from functools import lru_cache
+
+timer = []
+timer_rec = []
+
+@lru_cache()
+def F_rec(n):
+    if n == 1:
+        return 1
+    else:
+        return ((-1) ** n) * ((math.factorial(n - 1)) - G_rec(n - 1))
+
+@lru_cache()
+def G_rec(n):
+    if n == 1:
+        return 1
+    else:
+        return F_rec(n - 1)
+
+def F_it(x):
+    f_num=[]
+    f_pr, g_pr = 1, 1
+    for i in range(2, x+1):
+        f_n=((-1)**i)*(math.factorial(i-1)-g_pr)
+        g_n=f_pr
+        f_pr, g_pr = f_n, g_n
+    return f_n
+
+
+print("Введите натуральное число от 1 ")
+n = int(input())
+graf = list(range(2, n + 1))
+
+for i in graf:
+    start = time.time()
+    result = F_it(i)
+    end = time.time()
+    timer.append(end - start)
+    start_rec = time.time()
+    res = F_rec(i)
+    end_rec = time.time()
+    timer_rec.append(end_rec - start_rec)
+    print(i,
+          " | Результат рекурсии ->", res,
+          " | результат итерации ->", result,
+          " | время  рекурсии ->", end_rec - start_rec,
+          " | время  итерации ->", end - start)
+
+plt.plot(graf, timer, label='Итерационная функция.')
+plt.plot(graf, timer_rec, label='Рекусионная функция.')
+plt.legend(loc=2)
+
+plt.xlabel('Значение n')
+plt.ylabel('Время выполнения (c)')
+plt.show()
