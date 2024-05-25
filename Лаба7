@@ -1,3 +1,4 @@
+from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
 
@@ -64,5 +65,8 @@ btn.place(x=10, y=200)
 
 out=tk.Text(bg='#FFFAF0', fg='black', font=("Arial", 9), height=25, width=80, wrap="word")
 out.place(x=400, y=10)
+
+scrollbar = tk.Scrollbar(orient="vertical", command=out.yview)
+scrollbar.pack(side=RIGHT, fill=Y)
 
 window.mainloop()
