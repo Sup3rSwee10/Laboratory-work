@@ -24,13 +24,6 @@ def calc():
     t = str(enter2.get())
     ttype = t.split()
 
-    type=[]
-    for i in range(1,n+1):
-        type.append(i)
-    if ttype not in type:
-        messagebox.showinfo('Ошибка', f'Таких типов нет')
-        exit()
-
     res = list((combinations_with_replacement(ttype, k)))
 
     cntr=(len(res)+1)
