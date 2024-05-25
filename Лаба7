@@ -1,0 +1,75 @@
+import tkinter as tk
+from tkinter import messagebox
+
+
+def combinations_with_replacement(iterable, r):
+    pool = tuple(iterable)
+    n = len(pool)
+    if not n and r:
+        return
+    indices = [0] * r
+    yield tuple(pool[i] for i in indices)
+    while True:
+        for i in reversed(range(r)):
+            if indices[i] != n - 1:
+                break
+        else:
+            return
+        indices[i:] = [indices[i] + 1] * (r - i)
+        yield tuple(pool[i] for i in indices)
+
+def calc():
+    n = int(enter1.get())
+    k = int(enter3.get())
+    t = str(enter2.get())
+    ttype = t.split()
+
+    type=[]
+    for i in range(1,n+1):
+        type.append(i)
+    if ttype not in type:
+        messagebox.showinfo('Ошибка', f'Таких типов нет')
+        exit()
+
+    res = list((combinations_with_replacement(ttype, k)))
+
+    cntr=(len(res)+1)
+    for i in range(0, len(res)):
+        cntr-=1
+        out.insert(0.0, f'Вариант{cntr}: {k} компьютеров типов {res[i]}\n' )
+
+
+
+window=tk.Tk()
+
+window.title('Калькулятор закупок')
+
+window.geometry('975x400')
+
+window['bg'] = '#e6e6fa'
+
+message1 = tk.Label(window, text = 'Введите доступное колличество типов (шт.)', font=("Arial Bold",12), fg='black', bg='#e6e6fa')
+message1.place(x=10, y=10)
+
+enter1=tk.Entry(fg='black', width=25)
+enter1.place(x=10, y=35)
+
+message2 = tk.Label(window, text = 'Введите номера необходимых типов через пробел', font=("Arial Bold",12), fg='black', bg='#e6e6fa')
+message2.place(x=10, y=75)
+
+enter2=tk.Entry(fg='black', width=25)
+enter2.place(x=10, y=100)
+
+message3 = tk.Label(window, text = 'Введите объём закупки (шт.)', font=("Arial Bold",12), fg='black', bg='#e6e6fa')
+message3.place(x=10, y=140)
+
+enter3=tk.Entry(fg='black', width=25)
+enter3.place(x=10, y=165)
+
+btn=tk.Button(window, text="Расчитать варианты закупки", width='30',height='1', fg='black', bg='#DEDEDE', command=calc)
+btn.place(x=10, y=200)
+
+out=tk.Text(bg='#FFFAF0', fg='black', font=("Arial", 9), height=25, width=80, wrap="word")
+out.place(x=400, y=10)
+
+window.mainloop()
