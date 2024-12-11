@@ -1,0 +1,107 @@
+import tkinter as tk
+from tkinter import messagebox
+
+
+class TicTacToe:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Крестики-Нолики")
+
+        self.player = "X"  # Игрок X начинает первым
+        self.board = [" " for _ in range(9)]
+        self.buttons = [tk.Button(root, text=" ", font=('Arial', 40), width=5, height=2,
+                                  command=lambda i=i: self.click(i)) for i in range(9)]
+
+        for i, button in enumerate(self.buttons):
+            row = i // 3
+            col = i % 3
+            button.grid(row=row, column=col)
+
+    def click(self, i):
+        if self.board[i] == " ":
+            self.board[i] = self.player
+            self.buttons[i].config(text=self.player)
+            if self.check_winner():
+                messagebox.showinfo("Игра окончена", f"Игрок {self.player} выиграл!")
+                self.reset_game()
+            elif " " not in self.board:
+                messagebox.showinfo("Игра окончена", "Ничья!")
+                self.reset_game()
+            else:
+                self.player = "O"  # Переключаемся на AI
+                self.ai_move()
+
+    def ai_move(self):
+        step = self.AI()
+        if step != "":
+            self.board[step] = self.player
+            self.buttons[step].config(text=self.player)
+            if self.check_winner():
+                messagebox.showinfo("Игра окончена", f"Игрок {self.player} выиграл!")
+                self.reset_game()
+            elif " " not in self.board:
+                messagebox.showinfo("Игра окончена", "Ничья!")
+                self.reset_game()
+            # Переключение обратно на игрока X
+            self.player = "X"
+
+    def AI(self):
+        step = ""
+
+        # 1) если на какой-либо из победных линий 2 свои фигуры и 0 чужих - ставим
+        step = self.check_line(2, 0)
+
+        # 2) если на какой-либо из победных линий 2 чужие фигуры и 0 своих - ставим
+        if step == "":
+            step = self.check_line(0, 2)
+
+        # 3) если 1 фигура своя и 0 чужих - ставим
+        if step == "":
+            step = self.check_line(1, 0)
+
+        # 4) центр пуст, то занимаем центр
+        if step == "":
+            if self.board[4] != "X" and self.board[4] != "O":
+                step = 4  # Центр с индексом 4
+
+        # 5) если центр занят, то занимаем первую ячейку
+        if step == "":
+            if self.board[0] != "X" and self.board[0] != "O":
+                step = 0  # Первая ячейка с индексом 0
+
+        return step
+
+    def check_line(self, my_count, enemy_count):
+        # Проверяет возможные выигрышные линии и возвращает индекс хода
+        for combo in [(0, 1, 2), (3, 4, 5), (6, 7, 8),
+                      (0, 3, 6), (1, 4, 7), (2, 5, 8),
+                      (0, 4, 8), (2, 4, 6)]:
+            my_marks = sum(1 for idx in combo if self.board[idx] == self.player)
+            enemy_marks = sum(1 for idx in combo if self.board[idx] != " " and self.board[idx] != self.player)
+
+            if my_marks == my_count and enemy_marks == enemy_count:
+                for idx in combo:
+                    if self.board[idx] == " ":
+                        return idx
+        return ""
+
+    def check_winner(self):
+        winning_combinations = [(0, 1, 2), (3, 4, 5), (6, 7, 8),
+                                (0, 3, 6), (1, 4, 7), (2, 5, 8),
+                                (0, 4, 8), (2, 4, 6)]
+        for combo in winning_combinations:
+            if self.board[combo[0]] == self.board[combo[1]] == self.board[combo[2]] != " ":
+                return True
+        return False
+
+    def reset_game(self):
+        self.board = [" " for _ in range(9)]
+        for button in self.buttons:
+            button.config(text=" ")
+        self.player = "X"  # Сброс игрока к X на старте новой игры
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    game = TicTacToe(root)
+    root.mainloop()
